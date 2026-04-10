@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    Sample Nautic Network XML Feed — v2.0
+    This file demonstrates the expected import format.
+    Use it to test the import system: php artisan vessels:import --file=storage/xml-imports/sample-feed.xml
+-->
+<NauticNetwork version="2.0" exported_at="2024-11-14T09:00:00+00:00">
+
+    <Vessel>
+        <ID>VES-00142</ID>
+        <Category>Sailboat</Category>
+        <Make>Bavaria Yachtbau</Make>
+        <Model>44 Cruiser</Model>
+        <YearBuilt>2019</YearBuilt>
+        <Status>available</Status>
+        <Description>Well-maintained Bavaria 44 Cruiser in excellent condition. Full batten mainsail, furling genoa. Serviced 2023.</Description>
+        <Dimensions>
+            <LOA unit="m">13.60</LOA>
+            <Beam unit="m">4.27</Beam>
+            <Draft unit="m">1.85</Draft>
+            <Weight unit="kg">8200</Weight>
+            <MastHeight unit="m">19.40</MastHeight>
+        </Dimensions>
+        <Engine>
+            <Make>Volvo Penta</Make>
+            <Model>D2-40</Model>
+            <Power unit="HP">40</Power>
+            <Hours>620</Hours>
+            <FuelType>Diesel</FuelType>
+            <Year>2019</Year>
+        </Engine>
+        <Price currency="EUR">89500</Price>
+        <VatIncluded>false</VatIncluded>
+        <Location>
+            <Country>Spain</Country>
+            <Region>Balearic Islands</Region>
+            <Port>Palma de Mallorca</Port>
+            <Latitude>39.5696</Latitude>
+            <Longitude>2.6502</Longitude>
+        </Location>
+    </Vessel>
+
+    <Vessel>
+        <ID>VES-00143</ID>
+        <Category>Motorboat</Category>
+        <Make>Sunseeker</Make>
+        <Model>Predator 57</Model>
+        <YearBuilt>2021</YearBuilt>
+        <Status>available</Status>
+        <Description>Stunning Sunseeker Predator 57. Twin MAN V8 engines. Flybridge with hardtop. All options.</Description>
+        <Dimensions>
+            <LOA unit="m">17.40</LOA>
+            <Beam unit="m">4.90</Beam>
+            <Draft unit="m">1.40</Draft>
+            <Weight unit="kg">21000</Weight>
+        </Dimensions>
+        <Engine>
+            <Make>MAN</Make>
+            <Model>V8-1200</Model>
+            <Power unit="HP">1200</Power>
+            <Hours>210</Hours>
+            <FuelType>Diesel</FuelType>
+            <Year>2021</Year>
+        </Engine>
+        <Price currency="EUR">420000</Price>
+        <VatIncluded>true</VatIncluded>
+        <Location>
+            <Country>Croatia</Country>
+            <Region>Dalmatia</Region>
+            <Port>Split</Port>
+            <Latitude>43.5081</Latitude>
+            <Longitude>16.4402</Longitude>
+        </Location>
+    </Vessel>
+
+    <Vessel>
+        <ID>VES-00144</ID>
+        <Category>Catamaran</Category>
+        <Make>Lagoon</Make>
+        <Model>450 F</Model>
+        <YearBuilt>2020</YearBuilt>
+        <Status>under_offer</Status>
+        <Description>Lagoon 450 F flybridge catamaran. 4 cabins, 4 heads. Air conditioning throughout. Watermaker, generator.</Description>
+        <Dimensions>
+            <LOA unit="m">13.96</LOA>
+            <Beam unit="m">7.84</Beam>
+            <Draft unit="m">1.22</Draft>
+            <Weight unit="kg">13500</Weight>
+        </Dimensions>
+        <Engine>
+            <Make>Yanmar</Make>
+            <Model>4JH57</Model>
+            <Power unit="HP">57</Power>
+            <Hours>890</Hours>
+            <FuelType>Diesel</FuelType>
+            <Year>2020</Year>
+        </Engine>
+        <Price currency="EUR">310000</Price>
+        <VatIncluded>false</VatIncluded>
+        <Location>
+            <Country>Greece</Country>
+            <Region>Attica</Region>
+            <Port>Athens Marina</Port>
+            <Latitude>37.9838</Latitude>
+            <Longitude>23.7275</Longitude>
+        </Location>
+    </Vessel>
+
+    <Vessel>
+        <ID>VES-00145</ID>
+        <Category>Sailboat</Category>
+        <Make>Beneteau</Make>
+        <Model>Oceanis 46.1</Model>
+        <YearBuilt>2022</YearBuilt>
+        <Status>available</Status>
+        <Description>Brand new Beneteau Oceanis 46.1. 3-cabin version. Fully equipped. Never chartered.</Description>
+        <Dimensions>
+            <LOA unit="m">14.37</LOA>
+            <Beam unit="m">4.49</Beam>
+            <Draft unit="m">2.00</Draft>
+            <Weight unit="kg">9800</Weight>
+        </Dimensions>
+        <Engine>
+            <Make>Yanmar</Make>
+            <Model>4JH45</Model>
+            <Power unit="HP">45</Power>
+            <Hours>120</Hours>
+            <FuelType>Diesel</FuelType>
+            <Year>2022</Year>
+        </Engine>
+        <Price currency="EUR">215000</Price>
+        <VatIncluded>false</VatIncluded>
+        <Location>
+            <Country>France</Country>
+            <Region>Brittany</Region>
+            <Port>La Rochelle</Port>
+            <Latitude>46.1591</Latitude>
+            <Longitude>-1.1520</Longitude>
+        </Location>
+    </Vessel>
+
+    <Vessel>
+        <ID>VES-00146</ID>
+        <Category>RIB</Category>
+        <Make>Ribeye</Make>
+        <Model>A600</Model>
+        <YearBuilt>2021</YearBuilt>
+        <Status>available</Status>
+        <Description>Ribeye A600 RIB. Honda 150HP outboard. Trailer included. Perfect day boat.</Description>
+        <Dimensions>
+            <LOA unit="m">6.00</LOA>
+            <Beam unit="m">2.50</Beam>
+            <Draft unit="m">0.45</Draft>
+            <Weight unit="kg">580</Weight>
+        </Dimensions>
+        <Engine>
+            <Make>Honda</Make>
+            <Model>BF150</Model>
+            <Power unit="HP">150</Power>
+            <Hours>145</Hours>
+            <FuelType>Petrol</FuelType>
+            <Year>2021</Year>
+        </Engine>
+        <Price currency="GBP">28500</Price>
+        <VatIncluded>true</VatIncluded>
+        <Location>
+            <Country>United Kingdom</Country>
+            <Region>South Coast</Region>
+            <Port>Hamble</Port>
+            <Latitude>50.8579</Latitude>
+            <Longitude>-1.3107</Longitude>
+        </Location>
+    </Vessel>
+
+</NauticNetwork>

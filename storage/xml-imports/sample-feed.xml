@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><vessels>
+            <Vessel>
+                <id>VES-001</id>
+                <external_id>VES-001</external_id>
+                <make>Bavaria</make>
+                <model>44 Cruiser</model>
+                <category>Sailboat</category>
+                <loa>13.60</loa>
+                <loa_m>13.60</loa_m>
+                <engine>Volvo Penta</engine>
+                <engine_make>Volvo Penta</engine_make>
+                <price>89500</price>
+                <price_amount>89500</price_amount>
+                <currency>EUR</currency>
+                <country>Spain</country>
+            </Vessel>
+            <Vessel>
+                <id>VES-002</id>
+                <external_id>VES-002</external_id>
+                <make>Bavaria</make>
+                <model>44 Cruiser</model>
+                <category>Sailboat</category>
+                <loa>13.60</loa>
+                <loa_m>13.60</loa_m>
+                <engine>Volvo Penta</engine>
+                <engine_make>Volvo Penta</engine_make>
+                <price>89500</price>
+                <price_amount>89500</price_amount>
+                <currency>EUR</currency>
+                <country>Spain</country>
+            </Vessel>
+            <Vessel>
+                <id>VES-003</id>
+                <external_id>VES-003</external_id>
+                <make>Bavaria</make>
+                <model>44 Cruiser</model>
+                <category>Sailboat</category>
+                <loa>13.60</loa>
+                <loa_m>13.60</loa_m>
+                <engine>Volvo Penta</engine>
+                <engine_make>Volvo Penta</engine_make>
+                <price>89500</price>
+                <price_amount>89500</price_amount>
+                <currency>EUR</currency>
+                <country>Spain</country>
+            </Vessel>
+            <Vessel>
+                <id>VES-004</id>
+                <external_id>VES-004</external_id>
+                <make>Bavaria</make>
+                <model>44 Cruiser</model>
+                <category>Sailboat</category>
+                <loa>13.60</loa>
+                <loa_m>13.60</loa_m>
+                <engine>Volvo Penta</engine>
+                <engine_make>Volvo Penta</engine_make>
+                <price>89500</price>
+                <price_amount>89500</price_amount>
+                <currency>EUR</currency>
+                <country>Spain</country>
+            </Vessel>
+            <Vessel>
+                <id>VES-005</id>
+                <external_id>VES-005</external_id>
+                <make>Bavaria</make>
+                <model>44 Cruiser</model>
+                <category>Sailboat</category>
+                <loa>13.60</loa>
+                <loa_m>13.60</loa_m>
+                <engine>Volvo Penta</engine>
+                <engine_make>Volvo Penta</engine_make>
+                <price>89500</price>
+                <price_amount>89500</price_amount>
+                <currency>EUR</currency>
+                <country>Spain</country>
+            </Vessel></vessels>
