@@ -1,59 +1,267 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Vessel Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel application for managing marine vessel listings using the
+[Nautic Network XML specification](https://www.nautic-network.org/).
+Supports both XML feed imports and manual data entry, with full export capability.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Table of Contents
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. [Features](#features)
+2. [Requirements](#requirements)
+3. [Installation](#installation)
+4. [Database Schema](#database-schema)
+5. [XML Import](#xml-import)
+6. [XML Export](#xml-export)
+7. [Manual Form Entry](#manual-form-entry)
+8. [Scheduled Cron Import](#scheduled-cron-import)
+9. [Running Tests](#running-tests)
+10. [File Structure](#file-structure)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+| Feature | Detail |
+|---------|--------|
+| **Database migrations** | 6 normalised tables covering vessels, dimensions, engines, pricing, locations, and import logs |
+| **XML import** | Parses Nautic Network v2.0 XML; idempotent (safe to re-run); per-record error handling |
+| **XML export** | Exports any filtered set of vessels back to spec-compliant XML |
+| **Manual forms** | Full Blade form with server-side validation via FormRequest |
+| **Import logging** | Every import logged to `xml_import_logs` with inserted/updated/failed counts |
+| **Cron import** | Artisan command `vessels:import` for scheduled or webhook-triggered imports |
+| **Soft deletes** | Vessels are soft-deleted, never hard-removed |
+| **Test suite** | Feature and unit tests covering import, export, form validation, and CRUD |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Requirements
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- PHP 8.2+
+- Laravel 11.x
+- MySQL 8.0+ (or SQLite for local dev)
+- Composer
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Installation
 
-## Contributing
+```bash
+# 1. Clone and install
+git clone https://github.com/your-username/nautic-network.git
+cd nautic-network
+composer install
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 2. Environment
+cp .env.example .env
+php artisan key:generate
 
-## Code of Conduct
+# 3. Configure your database in .env
+DB_DATABASE=nautic_network
+DB_USERNAME=root
+DB_PASSWORD=
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 4. Run migrations
+php artisan migrate
 
-## Security Vulnerabilities
+# 5. Seed with sample data (imports sample-feed.xml)
+php artisan db:seed --class=VesselSeeder
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 6. Serve
+php artisan serve
+# Visit: http://localhost:8000/vessels
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Database Schema
+
+Six tables, all with proper foreign keys and indexes:
+
+```
+vessels                 — core listing record (external_id, source, category, status)
+  └── vessel_dimensions — loa_m, beam_m, draft_m, weight_kg, mast_height_m
+  └── vessel_engines    — make, model, power_hp, fuel_type, hours
+  └── vessel_prices     — amount, currency, vat_included
+  └── vessel_locations  — country, region, port, latitude, longitude
+
+xml_import_logs         — audit trail for every import run
+```
+
+Key design decisions:
+- `external_id` on `vessels` is unique and nullable — used to deduplicate XML imports
+- `source` enum (`xml` | `manual`) tracks how each record was created
+- All related tables use `cascadeOnDelete` so removing a vessel cleans up automatically
+- `vessels` uses `softDeletes` so no data is ever permanently lost
+
+---
+
+## XML Import
+
+### Manual upload (web UI)
+
+Visit `/vessels/import` and upload any Nautic Network-compliant XML file.
+
+### Via Artisan (cron / CLI)
+
+```bash
+# Import from a local file
+php artisan vessels:import --file=storage/xml-imports/sample-feed.xml
+
+# Import from a remote URL (set NAUTIC_FEED_URL in .env)
+php artisan vessels:import
+
+# Specify source label for the audit log
+php artisan vessels:import --source=cron
+```
+
+### How the importer works
+
+1. Loads and validates the XML (catches malformed files cleanly)
+2. Creates an `xml_import_logs` entry with `status=processing`
+3. Loops over `<Vessel>` nodes, running each inside a DB transaction
+4. Uses `updateOrCreate` on `external_id` — **idempotent by design**
+5. Updates the log with inserted/updated/failed counts on completion
+
+### Sample XML format
+
+See `storage/xml-imports/sample-feed.xml` for a full working example. Key structure:
+
+```xml
+<NauticNetwork version="2.0">
+  <Vessel>
+    <ID>VES-00142</ID>
+    <Category>Sailboat</Category>
+    <Make>Bavaria Yachtbau</Make>
+    <Model>44 Cruiser</Model>
+    <YearBuilt>2019</YearBuilt>
+    <Status>available</Status>
+    <Dimensions>
+      <LOA unit="m">13.60</LOA>
+      <Beam unit="m">4.27</Beam>
+      <Draft unit="m">1.85</Draft>
+    </Dimensions>
+    <Engine>
+      <Make>Volvo Penta</Make>
+      <Model>D2-40</Model>
+      <Power unit="HP">40</Power>
+      <FuelType>Diesel</FuelType>
+    </Engine>
+    <Price currency="EUR">89500</Price>
+    <Location>
+      <Country>Spain</Country>
+      <Port>Palma de Mallorca</Port>
+    </Location>
+  </Vessel>
+</NauticNetwork>
+```
+
+---
+
+## XML Export
+
+Export all vessels (or filtered) to a spec-compliant XML file:
+
+```
+GET /vessels/export/xml                     — export all
+GET /vessels/export/xml?status=available    — filter by status
+GET /vessels/export/xml?category=Sailboat   — filter by category
+```
+
+The response streams as a downloadable `.xml` file with correct `Content-Type` headers.
+
+---
+
+## Manual Form Entry
+
+Visit `/vessels/create` to enter a vessel manually. The form covers:
+
+- Basic info (make, model, category, year, status)
+- Dimensions (LOA, beam, draft)
+- Engine (make, model, power, fuel type)
+- Pricing (amount, currency)
+- Location (country, port)
+
+Validation is handled by `StoreVesselRequest` with human-readable error messages.
+All form data is stored in the same normalised tables as XML imports.
+
+---
+
+## Scheduled Cron Import
+
+Add to `app/Console/Kernel.php`:
+
+```php
+$schedule->command('vessels:import')->daily();
+// or
+$schedule->command('vessels:import')->twiceDaily(6, 18);
+```
+
+Set `NAUTIC_FEED_URL=https://your-feed-provider.com/feed.xml` in `.env` to pull from a remote source automatically.
+
+---
+
+## Running Tests
+
+```bash
+# All tests
+php artisan test
+
+# Specific suites
+php artisan test --filter XmlImportTest
+php artisan test --filter XmlExportTest
+php artisan test --filter VesselFormTest
+
+# With coverage (requires Xdebug)
+php artisan test --coverage
+```
+
+Test coverage includes:
+- XML import: valid file, idempotency, related records, invalid file, audit log
+- XML export: single vessel, parseable output, filtered export
+- Form: create, validation, update, soft delete
+
+---
+
+## File Structure
+
+```
+app/
+├── Console/Commands/
+│   └── ImportVesselsCommand.php     # php artisan vessels:import
+├── Http/
+│   ├── Controllers/
+│   │   └── VesselController.php     # index, show, create, store, update, destroy, import, export
+│   └── Requests/
+│       └── StoreVesselRequest.php   # validation rules
+├── Models/
+│   ├── Vessel.php                   # main model + scopes + accessor
+│   └── VesselRelated.php            # VesselDimension, VesselEngine, VesselPrice, VesselLocation, XmlImportLog
+└── Services/
+    ├── NauticXmlImportService.php   # XML parsing + DB upsert
+    └── NauticXmlExportService.php   # Vessel → XML serialisation
+
+database/
+├── migrations/                      # 6 migration files
+└── seeders/
+    └── VesselSeeder.php             # seeds via the real importer
+
+resources/views/
+├── layouts/app.blade.php            # base layout
+└── vessels/
+    ├── index.blade.php              # listings table + filters
+    ├── create.blade.php             # add/edit form
+    ├── show.blade.php               # detail view
+    └── import.blade.php             # upload form + import log
+
+routes/web.php                       # all application routes
+storage/xml-imports/sample-feed.xml  # 5-vessel sample XML feed
+
+tests/
+├── Feature/
+│   ├── XmlImportTest.php
+│   └── VesselFormTest.php
+└── Unit/
+    └── XmlExportTest.php
+```
